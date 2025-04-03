@@ -9,23 +9,19 @@ const prisma = new PrismaClient();
 app.get("/users", async (req, res) => {
   let users = [];
 
-  if (req.query) {
+  if (req.query?.name || req.query?.email || req.query?.age) {
     users = await prisma.user.findMany({
       where: {
-        name: req.query.name,
-        email: req.query.email,
-        age: Number(req.query.age),
+        name: req.query?.name,
+        email: req.query?.email,
+        age: req.query?.age && Number(req.query?.age),
       },
     });
   } else {
     users = await prisma.user.findMany();
   }
 
-  if (users.length) {
-    res.status(200).json(users);
-  } else {
-    res.status(200).json({ message: "Nenhum usuário encontrado" });
-  }
+  res.status(200).json(users);
 });
 
 app.post("/users", async (req, res) => {
@@ -69,4 +65,4 @@ app.delete("/users/:id", async (req, res) => {
   res.status(201).json({ message: "Usuário deletado com sucesso." });
 });
 
-app.listen(5001);
+app.listen(3001);
